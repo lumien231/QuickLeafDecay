@@ -1,0 +1,16 @@
+[
+{
+  "modid": "quickleafdecay",
+  "name": "Quick Leaf Decay",
+  "description": "Makes leaf decay faster",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "http://minecraft.curseforge.com/mc-mods/225839-fast-leave-decay",
+  "authorList": ["lumien"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
