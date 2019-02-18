@@ -10,16 +10,20 @@ import lumien.quickleafdecay.config.QuickLeafDecayConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -45,23 +49,22 @@ public class QuickLeafDecay
 
 		MinecraftForge.EVENT_BUS.addListener(this::breakBlock);
 		MinecraftForge.EVENT_BUS.addListener(this::notifyNeighbors);
-		MinecraftForge.EVENT_BUS.addListener(this::onConfigChanged);
 		MinecraftForge.EVENT_BUS.addListener(LeafTickScheduler.INSTANCE::tick);
+
+		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, QuickLeafDecayConfig.spec);
+		modEventBus.register(QuickLeafDecayConfig.class);
 	}
 
 	public void preInit(FMLCommonSetupEvent event)
 	{
-		config = new QuickLeafDecayConfig();
-		// config.preInit(event);
 
-		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	Cache<BlockPos, Integer> brokenBlockCache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.SECONDS).maximumSize(200).build();
 
 	public void breakBlock(BreakEvent event)
 	{
-		if (config.playerDecay && !(event.getPlayer() instanceof FakePlayer) && !event.getWorld().isRemote())
+		if (QuickLeafDecayConfig.playerDecay.get() && !(event.getPlayer() instanceof FakePlayer) && !event.getWorld().isRemote())
 		{
 			brokenBlockCache.put(event.getPos(), 0);
 		}
@@ -69,16 +72,16 @@ public class QuickLeafDecay
 
 	public void notifyNeighbors(NeighborNotifyEvent event)
 	{
-		if (!config.playerDecay || brokenBlockCache.getIfPresent(event.getPos()) != null)
+		if (!event.getWorld().isRemote() && !QuickLeafDecayConfig.playerDecay.get() || brokenBlockCache.getIfPresent(event.getPos()) != null)
 		{
 			IBlockState notifierState = event.getState();
 			Block b = notifierState.getBlock();
 
 			if (b.isAir(notifierState, event.getWorld(), event.getPos()))
 			{
-				if (config.playerDecay)
+				if (QuickLeafDecayConfig.playerDecay.get())
 					brokenBlockCache.invalidate(event.getPos());
-			
+
 				for (EnumFacing facing : event.getNotifiedSides())
 				{
 					BlockPos offPos = event.getPos().offset(facing);
@@ -87,24 +90,16 @@ public class QuickLeafDecay
 					{
 						IBlockState state = event.getWorld().getBlockState(offPos);
 
-						if (state.getBlock() instanceof BlockLeaves)
+						if (BlockTags.LEAVES.contains(state.getBlock()))
 						{
-							if (config.playerDecay)
+							if (QuickLeafDecayConfig.playerDecay.get())
 								brokenBlockCache.put(offPos, 0);
 
-							LeafTickScheduler.INSTANCE.schedule((World) event.getWorld(), offPos, config.decaySpeed + (config.decayFuzz > 0 ? rng.nextInt(config.decayFuzz) : 0));
+							LeafTickScheduler.INSTANCE.schedule((World) event.getWorld(), offPos, QuickLeafDecayConfig.decaySpeed.get() + (QuickLeafDecayConfig.decayFuzz.get() > 0 ? rng.nextInt(QuickLeafDecayConfig.decayFuzz.get()) : 0));
 						}
 					}
 				}
 			}
-		}
-	}
-
-	public void onConfigChanged(OnConfigChangedEvent event)
-	{
-		if (event.getModID().equals(MOD_ID))
-		{
-			config.syncConfig();
 		}
 	}
 }

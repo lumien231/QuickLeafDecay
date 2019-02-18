@@ -1,10 +1,13 @@
 package lumien.quickleafdecay;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
@@ -44,14 +47,21 @@ public class LeafTickScheduler
 			{
 				ScheduledTick st = iterator.next();
 
-				if (--st.tick == 0)
+				if (--st.tick <= 0)
 				{
 					iterator.remove();
 
-					IBlockState state = st.worldObj.getBlockState(st.pos);
+					World worldObj = st.worldReference.get();
+					if (worldObj != null && worldObj.isBlockLoaded(st.pos))
+					{
+						IBlockState state = worldObj.getBlockState(st.pos);
 
-					state.tick(st.worldObj, st.pos, st.worldObj.getRandom());
-					state.randomTick(st.worldObj, st.pos, st.worldObj.getRandom());
+						if (BlockTags.LEAVES.contains(state.getBlock()))
+						{
+							state.tick(worldObj, st.pos, worldObj.getRandom());
+							state.randomTick(worldObj, st.pos, worldObj.getRandom());
+						}
+					}
 				}
 			}
 		}
@@ -59,7 +69,7 @@ public class LeafTickScheduler
 
 	class ScheduledTick
 	{
-		World worldObj;
+		WeakReference<World> worldReference;
 		BlockPos pos;
 
 		int tick;
@@ -67,7 +77,7 @@ public class LeafTickScheduler
 		public ScheduledTick(World worldObj, BlockPos pos, int tick)
 		{
 			super();
-			this.worldObj = worldObj;
+			this.worldReference = new WeakReference<World>(worldObj);
 			this.pos = pos;
 			this.tick = tick;
 		}

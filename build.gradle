@@ -13,7 +13,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 
 
-version = "1.2.4"
+version = "1.2.5"
 group = "lumien.quickleafdecay" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
@@ -24,8 +24,6 @@ compileJava {
 archivesBaseName = "QuickLeafDecay-MC"
 
 minecraft {
-    version = "1.12.1-14.22.0.2462"
-    
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
     // stable_#            stables are built at the discretion of the MCP team.
