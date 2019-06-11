@@ -1,20 +1,23 @@
-modLoader="javafml" #mandatory
-
-loaderVersion="[24,)" #mandatory (24 is current forge version)
+modLoader="javafml"
+loaderVersion="[26,)"
+logoFile="quickleafdecay.png" #optional
+authors="Lumien" #optional
+displayURL="https://minecraft.curseforge.com/projects/fast-leaf-decay" #optional
 issueTrackerURL="https://github.com/lumien231/QuickLeafDecay" #optional
 
-displayURL="https://minecraft.curseforge.com/projects/quick-leaf-decay" #optional
+[[mods]]
+    modId="quickleafdecay" #mandatory
+    version="${file.jarVersion}" #mandatory
+    displayName="Quick Leaf Decay" #mandatory
+    description='''
+    Makes leaf decay faster
 
-authors="Lumien" #optional
+    Check the config to change the decay rate!
+    '''
 
-[[mods]] #mandatory
-
-modId="quickleafdecay" #mandatory
-
-version="${file.jarVersion}" #mandatory
-
-displayName="Quick Leaf Decay" #mandatory
-
-description='''
-Makes leaf decay faster
-'''
+[[dependencies.sct]]
+    modId="forge"
+    mandatory=true
+    versionRange="[26,)"
+    ordering="NONE"
+    side="BOTH"
