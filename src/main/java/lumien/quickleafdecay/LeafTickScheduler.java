@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.minecraft.block.BlockLeaves;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -54,7 +53,7 @@ public class LeafTickScheduler
 					World worldObj = st.worldReference.get();
 					if (worldObj != null && worldObj.isBlockLoaded(st.pos))
 					{
-						IBlockState state = worldObj.getBlockState(st.pos);
+						BlockState state = worldObj.getBlockState(st.pos);
 
 						if (BlockTags.LEAVES.contains(state.getBlock()))
 						{
