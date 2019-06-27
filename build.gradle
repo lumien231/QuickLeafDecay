@@ -20,7 +20,7 @@ String semver = "${version_major}.${version_minor}.${version_patch}"
 version = "${semver}.${build_number}"
 
 group = project.jarGroup
-archivesBaseName = "${project.archiveBase}-${project.MCVersion}-${version}"
+archivesBaseName = "${project.archiveBase}-${project.MCVersion}"
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
