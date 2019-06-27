@@ -22,6 +22,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -30,15 +31,13 @@ import java.util.concurrent.TimeUnit;
 public class QuickLeafDecay {
 
 	static Random rng = new Random();
-
-	public static QuickLeafDecay INSTANCE;
-
-	public QuickLeafDecayConfig config;
+	private static QuickLeafDecay INSTANCE;
+	private Cache<BlockPos, Integer> brokenBlockCache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.SECONDS).maximumSize(200).build();
 
 	public QuickLeafDecay()
 	{
 		INSTANCE = this;
-
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, QuickLeafDecayConfig.COMMON_CONFIG);
 		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		modEventBus.addListener(this::preInit);
 
@@ -46,16 +45,13 @@ public class QuickLeafDecay {
 		MinecraftForge.EVENT_BUS.addListener(this::notifyNeighbors);
 		MinecraftForge.EVENT_BUS.addListener(LeafTickScheduler.INSTANCE::tick);
 
-		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, QuickLeafDecayConfig.spec);
-		modEventBus.register(QuickLeafDecayConfig.class);
+		QuickLeafDecayConfig.loadConfig(QuickLeafDecayConfig.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve("quickleafdecay-common.toml"));
 	}
 
 	public void preInit(FMLCommonSetupEvent event)
 	{
 
 	}
-
-	Cache<BlockPos, Integer> brokenBlockCache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.SECONDS).maximumSize(200).build();
 
 	public void breakBlock(BlockEvent.BreakEvent event)
 	{

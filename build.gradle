@@ -5,9 +5,6 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
-		maven {
-            url 'https://plugins.gradle.org/m2/'
-		}
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
@@ -16,18 +13,18 @@ buildscript {
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
-apply plugin: 'maven'
 apply plugin: 'java'
 
-// Modname, Modid and Versions are set in "init/ModGlobals.java"
+build_number = System.getenv().BUILD_NUMBER
+String semver = "${version_major}.${version_minor}.${version_patch}"
+version = "${semver}.${build_number}"
 
-version = getMCVersion() + "-" + getVersion()
-group = getGroup()
-archivesBaseName = getArchiveName()
+group = project.jarGroup
+archivesBaseName = "${project.archiveBase}-${project.MCVersion}-${version}"
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
-    mappings channel: 'snapshot', version: '20190608-1.14.2'
+    mappings channel: 'snapshot', version: "${project.MCPMappings}-${project.MCVersion}"
 	
     runs {
         client = {
@@ -49,15 +46,15 @@ repositories {
 }
 
 dependencies {
-	minecraft "net.minecraftforge:forge:" + getMCVersion() + "-" + getForgeSpec()
+	minecraft "net.minecraftforge:forge:${project.MCVersion}-${project.ForgeVersion}"
 }
 
 processResources {
-	inputs.property "version", getVersion()
-	inputs.property "mcversion", getMCVersion()
+	inputs.property "version", version
+	inputs.property "mcversion", project.MCVersion
 	from(sourceSets.main.resources.srcDirs) {
 		include 'mods.toml'
-		expand 'version':getVersion(), 'mcversion':getMCVersion()
+		expand 'version': version, 'mcversion': project.MCVersion
 	}
 	from(sourceSets.main.resources.srcDirs) {
 		exclude 'mods.toml'
@@ -82,91 +79,16 @@ artifacts {
 
 jar {
     manifest {
-        attributes(["Specification-Title": getModName(),
-                    "Specification-Vendor": "Lumien",
-                    "Specification-Version": getVersion(),
-                    "Implementation-Title": getModName(),
-                    "Implementation-Version": getVersion(),
-                    "Implementation-Vendor" : "Lumien",
+        attributes(["Specification-Title": "Quick Leaf Decay",
+                    "Specification-Vendor": "Lumien, JayJay1989BE",
+                    "Specification-Version": "${semver}",
+                    "Implementation-Title": "quickleafdecay",
+                    "Implementation-Version": "${project.version}",
+                    "Implementation-Vendor" : "Lumien, JayJay1989BE",
+					"Original-Author" : "Lumien",
                     "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")])
     }
 	if (project.hasProperty("signSHA1")) {
 		manifest.attributes += ["Fingerprint": project.getProperty("signSHA1")]
 	}
-}
-
-String getMCVersion() {
-	return "1.14.2"
-}
-
-String getForgeSpec() {
-	return "26.0.16"
-}
-
-String getGroup() {
-	if (project.hasProperty("jarGroup")) {
-		return project.getProperty("jarGroup")
-	}
-	return "lumien." + getModId()
-}
-
-String getVersion() {
-	String major = "1"
-	String revision = "0"
-	String patch = "0"
-	if (project.hasProperty("modPropertiesJavaFile")) {
-		String prefix = "public static final String VERSION = \""
-		File file = file(project.modPropertiesJavaFile)
-		file.eachLine { String s ->
-			s = s.trim()
-			if (s.startsWith(prefix)) {
-				s = s.substring(prefix.length(), s.length() - 2)
-				String[] pts = s.split("\\.")
-
-				major = pts[0]
-				revision = pts[1]
-				patch = pts[2]
-			}
-		}
-	}
-	return "$major.$revision.$patch"
-}
-
-String getModId() {
-	String modid = "mymod";
-	if (project.hasProperty("modPropertiesJavaFile")) {
-		String prefix = "public static final String MODID = \""
-		File file = file(project.modPropertiesJavaFile)
-		file.eachLine { String s ->
-			s = s.trim()
-			if (s.startsWith(prefix)) {
-				s = s.substring(prefix.length(), s.length() - 2)
-				modid = s
-			}
-		}
-	}
-	return "$modid"
-}
-
-String getModName() {
-	String modname = "MyMod"
-	if (project.hasProperty("modPropertiesJavaFile")) {
-		String prefix = "public static final String NAME = \""
-		File file = file(project.modPropertiesJavaFile)
-		file.eachLine { String s ->
-			s = s.trim()
-			if (s.startsWith(prefix)) {
-				s = s.substring(prefix.length(), s.length() - 2)
-				modname = s
-			}
-		}
-	}
-	return "$modname"
-}
-
-String getArchiveName() {
-	if (project.hasProperty("archiveBase")) {
-		return project.archiveBase
-	}
-	return getModName()
 }
