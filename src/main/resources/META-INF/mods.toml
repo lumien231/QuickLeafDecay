@@ -9,7 +9,6 @@ authors="Lumien" #optional
     modId="quickleafdecay"
     version="${file.jarVersion}"
     displayName="Quick Leaf Decay"
-    displayName="Quick Leaf Decay"
     description='''
 Makes leaves decay faster
 '''
