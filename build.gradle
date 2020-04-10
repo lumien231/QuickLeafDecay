@@ -9,71 +9,65 @@ buildscript {
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
-//Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 
 
 version = "${mod_version}"
-group = "lumien.quickleafdecay" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "lumien.quickleafdecay"
+archivesBaseName = "QuickLeafDecay-MC${minecraft_version}"
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+sourceCompatibility = targetCompatibility = sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 compileJava {
-    sourceCompatibility = targetCompatibility = "1.8"
+    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-archivesBaseName = "QuickLeafDecay-MC"
 
 minecraft {
-    // the mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   snapshot are built nightly.
-    // stable_#            stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not always work.
-    // simply re-run your setup task after changing the mappings to update your workspace.
     mappings channel: 'snapshot', version: "${mcp_mappings}"
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-	
+
 	runs {
-        client = {
+        client {
+            workingDirectory project.file('run')
+
             // recommended logging data for a userdev environment
             properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
+
             // recommended logging level for the console
             properties 'forge.logging.console.level': 'debug'
-            workingDirectory project.file('run').canonicalPath
-            source sourceSets.main
+
+            mods {
+                quickleafdecay {
+                    source sourceSets.main
+                }
+            }
         }
-        server = {
+        server {
+            workingDirectory project.file('run')
+
             // recommended logging data for a userdev environment
             properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
+
             // recommended logging level for the console
             properties 'forge.logging.console.level': 'debug'
-            workingDirectory project.file('run').canonicalPath
-            source sourceSets.main
+
+            mods {
+                quickleafdecay {
+                    source sourceSets.main
+                }
+            }
         }
     }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-
-    // the deobf configurations:  'deobfCompile' and 'deobfProvided' are the same as the normal compile and provided,
-    // except that these dependencies get remapped to your current MCP mappings
-    //deobfCompile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-    //deobfProvided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // for more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
 }
-
-DependencySet dependencySet = configurations.getByName("minecraft").dependencies
-archivesBaseName = archivesBaseName + dependencySet.first().version.split("-")[0]
 
 jar {
     manifest {
         attributes(["Specification-Title": project.name,
                     "Specification-Vendor": "Lumien",
-                    "Specification-Version": "${version}", // We are version 1 of the modlauncher specification
+                    "Specification-Version": "${version}",
                     "Implementation-Title": project.name,
                     "Implementation-Version": "${version}",
                     "Implementation-Vendor" :"Lumien",
