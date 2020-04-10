@@ -51,7 +51,7 @@ public class LeafTickScheduler
 					iterator.remove();
 
 					ServerWorld worldObj = st.worldReference.get();
-					if (worldObj != null && worldObj.isBlockLoaded(st.pos))
+					if (worldObj != null && worldObj.isBlockPresent(st.pos))
 					{
 						BlockState state = worldObj.getBlockState(st.pos);
 
