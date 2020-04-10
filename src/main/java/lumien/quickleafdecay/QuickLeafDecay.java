@@ -12,7 +12,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
@@ -92,7 +92,7 @@ public class QuickLeafDecay
 							if (QuickLeafDecayConfig.playerDecay.get())
 								brokenBlockCache.put(offPos, 0);
 
-							LeafTickScheduler.INSTANCE.schedule((World) event.getWorld(), offPos, QuickLeafDecayConfig.decaySpeed.get() + (QuickLeafDecayConfig.decayFuzz.get() > 0 ? rng.nextInt(QuickLeafDecayConfig.decayFuzz.get()) : 0));
+							LeafTickScheduler.INSTANCE.schedule((ServerWorld) event.getWorld(), offPos, QuickLeafDecayConfig.decaySpeed.get() + (QuickLeafDecayConfig.decayFuzz.get() > 0 ? rng.nextInt(QuickLeafDecayConfig.decayFuzz.get()) : 0));
 						}
 					}
 				}
