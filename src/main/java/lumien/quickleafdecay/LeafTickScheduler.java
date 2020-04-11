@@ -1,16 +1,17 @@
 package lumien.quickleafdecay;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fml.LogicalSide;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class LeafTickScheduler
 {
@@ -50,7 +51,7 @@ public class LeafTickScheduler
 				{
 					iterator.remove();
 
-					World worldObj = st.worldReference.get();
+					ServerWorld worldObj = (ServerWorld) st.worldReference.get();
 					if (worldObj != null && worldObj.isBlockLoaded(st.pos))
 					{
 						BlockState state = worldObj.getBlockState(st.pos);

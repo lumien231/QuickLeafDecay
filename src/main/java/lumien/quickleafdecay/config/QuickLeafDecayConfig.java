@@ -1,18 +1,10 @@
 package lumien.quickleafdecay.config;
 
-import static net.minecraftforge.fml.Logging.CORE;
-import static net.minecraftforge.fml.loading.LogMarkers.FORGEMOD;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfig.Server;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class QuickLeafDecayConfig
 {
@@ -39,17 +31,18 @@ public class QuickLeafDecayConfig
 		
 	}
 	
-    @SubscribeEvent
+    /*@SubscribeEvent
     public static void onLoad(final ModConfig.Loading configEvent) 
     {
 
     }
 
     @SubscribeEvent
-    public static void onFileChange(final ModConfig.ConfigReloading configEvent) 
+    public static void onFileChange(final ModConfig.ConfigReloading configEvent)
     {
 
     }
+     */
 	
 	public static final ForgeConfigSpec spec;
     public static final QuickLeafDecayConfig CONFIG;
