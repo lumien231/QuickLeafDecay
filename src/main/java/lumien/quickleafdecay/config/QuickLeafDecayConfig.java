@@ -46,7 +46,7 @@ public class QuickLeafDecayConfig
     }
 
     @SubscribeEvent
-    public static void onFileChange(final ModConfig.ConfigReloading configEvent) 
+    public static void onFileChange(final ModConfig.Reloading configEvent)
     {
 
     }

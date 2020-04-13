@@ -12,7 +12,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
@@ -71,10 +71,12 @@ public class QuickLeafDecay
 	{
 		if (!event.getWorld().isRemote() && !QuickLeafDecayConfig.playerDecay.get() || brokenBlockCache.getIfPresent(event.getPos()) != null)
 		{
+			ServerWorld world = (ServerWorld) event.getWorld();
+
 			BlockState notifierState = event.getState();
 			Block b = notifierState.getBlock();
 
-			if (b.isAir(notifierState, event.getWorld(), event.getPos()))
+			if (b.isAir(notifierState, world, event.getPos()))
 			{
 				if (QuickLeafDecayConfig.playerDecay.get())
 					brokenBlockCache.invalidate(event.getPos());
@@ -83,16 +85,16 @@ public class QuickLeafDecay
 				{
 					BlockPos offPos = event.getPos().offset(direction);
 
-					if (event.getWorld().isBlockLoaded(offPos))
+					if (world.isBlockPresent(offPos))
 					{
-						BlockState state = event.getWorld().getBlockState(offPos);
+						BlockState state = world.getBlockState(offPos);
 
 						if (BlockTags.LEAVES.contains(state.getBlock()))
 						{
 							if (QuickLeafDecayConfig.playerDecay.get())
 								brokenBlockCache.put(offPos, 0);
 
-							LeafTickScheduler.INSTANCE.schedule((World) event.getWorld(), offPos, QuickLeafDecayConfig.decaySpeed.get() + (QuickLeafDecayConfig.decayFuzz.get() > 0 ? rng.nextInt(QuickLeafDecayConfig.decayFuzz.get()) : 0));
+							LeafTickScheduler.INSTANCE.schedule(world, offPos, QuickLeafDecayConfig.decaySpeed.get() + (QuickLeafDecayConfig.decayFuzz.get() > 0 ? rng.nextInt(QuickLeafDecayConfig.decayFuzz.get()) : 0));
 						}
 					}
 				}

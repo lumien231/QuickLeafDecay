@@ -8,7 +8,7 @@ import java.util.List;
 import net.minecraft.block.BlockState;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fml.LogicalSide;
 
@@ -25,7 +25,7 @@ public class LeafTickScheduler
 		scheduled = new ArrayList<ScheduledTick>();
 	}
 
-	public void schedule(World world, BlockPos pos, int delay)
+	public void schedule(ServerWorld world, BlockPos pos, int delay)
 	{
 		this.planned.add(new ScheduledTick(world, pos, delay));
 	}
@@ -50,8 +50,8 @@ public class LeafTickScheduler
 				{
 					iterator.remove();
 
-					World worldObj = st.worldReference.get();
-					if (worldObj != null && worldObj.isBlockLoaded(st.pos))
+					ServerWorld worldObj = st.worldReference.get();
+					if (worldObj != null && worldObj.isBlockPresent(st.pos))
 					{
 						BlockState state = worldObj.getBlockState(st.pos);
 
@@ -68,15 +68,15 @@ public class LeafTickScheduler
 
 	class ScheduledTick
 	{
-		WeakReference<World> worldReference;
+		WeakReference<ServerWorld> worldReference;
 		BlockPos pos;
 
 		int tick;
 
-		public ScheduledTick(World worldObj, BlockPos pos, int tick)
+		public ScheduledTick(ServerWorld worldObj, BlockPos pos, int tick)
 		{
 			super();
-			this.worldReference = new WeakReference<World>(worldObj);
+			this.worldReference = new WeakReference<ServerWorld>(worldObj);
 			this.pos = pos;
 			this.tick = tick;
 		}
